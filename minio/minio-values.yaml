@@ -1,0 +1,31 @@
+auth:
+  rootUser: "admin"
+  rootPassword: "password"
+# TODO: Uncomment this when we have a load balancer
+# service:
+#   type: LoadBalancer
+#   # Define both internal ports here
+#   ports:
+#     api: 9000
+#     console: 9001
+#   # Define both external nodePorts here, under the same service block
+#   nodePorts:
+#     api: 30000
+#     console: 30001
+service:
+  type: ClusterIP
+  ports:
+    api: 9000
+    console: 9001
+console:
+  enabled: true
+  # Define the public hostname for the API service
+  api:
+    hostname: minio-api.local
+  # Define the public hostname for the Console service
+  console:
+    hostname: minio.local
+defaultBuckets: "lakehouse, airflow, risingwave, kafka"
+persistence:
+  enabled: true
+  size: 50Gi
