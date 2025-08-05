@@ -1,9 +1,3 @@
-Of course. That's an excellent idea. Consolidating all your commands and configurations into a well-structured `README.md` file is the best way to document your project, making it easy for you or anyone else to recreate it.
-
-Here is a complete `README.md` file based on the notes and commands you've provided. It's organized logically from infrastructure setup to application deployment.
-
----
-
 # Personal Data Platform on K3s
 
 This project documents the step-by-step process of building a modern, personal data platform on a multi-node K3s cluster. The platform includes MinIO for object storage, Apache Iceberg with a REST Catalog for table formatting, and Trino as the distributed SQL query engine.
