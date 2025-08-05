@@ -142,7 +142,8 @@ Then test and reload NGINX: `sudo nginx -t && sudo systemctl reload nginx`.
     ```bash
     helm repo add bitnami https://charts.bitnami.com/bitnami
     helm repo update
-    ```2.  **Deploy MinIO** using a `minio-values.yaml` file and an `minio-ingress.yaml` file.
+    ```
+2.  **Deploy MinIO** using a `minio-values.yaml` file and an `minio-ingress.yaml` file.
     ```bash
     # Deploy MinIO
     helm upgrade --install minio -n minio bitnami/minio \
@@ -162,7 +163,8 @@ Then test and reload NGINX: `sudo nginx -t && sudo systemctl reload nginx`.
       --namespace catalog \
       --create-namespace \
       -f postgres/postgres-values.yaml
-    ```2.  **Deploy the Iceberg REST Catalog** and its Ingress using Kubernetes manifests.
+    ```
+2.  **Deploy the Iceberg REST Catalog** and its Ingress using Kubernetes manifests.
     ```bash
     kubectl apply -f iceberg/iceberg.yaml
     kubectl apply -f iceberg/iceberg-ingress.yaml
