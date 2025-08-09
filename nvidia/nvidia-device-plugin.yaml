@@ -1,0 +1,53 @@
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: nvidia
+handler: nvidia
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nvidia-device-plugin-daemonset
+  namespace: kube-system
+  labels:
+    name: nvidia-device-plugin-ds
+spec:
+  selector:
+    matchLabels:
+      name: nvidia-device-plugin-ds
+  template:
+    metadata:
+      labels:
+        name: nvidia-device-plugin-ds
+    spec:
+      runtimeClassName: nvidia            # ➊ use NVIDIA runtime
+      nodeSelector:                       # ➋ schedule only on GPU node(s)
+        accelerator: nvidia
+      volumes:                            # ➌ mount WSL driver libs
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+        - name: wsl-libs
+          hostPath:
+            path: /usr/lib/wsl/lib
+            type: Directory
+      containers:
+        - name: nvidia-device-plugin-ctr
+          image: nvcr.io/nvidia/k8s-device-plugin:v0.16.2
+          args: ["--fail-on-init-error=true"]
+          env:                            # ➍ WSL-specific env
+            - name: LD_LIBRARY_PATH
+              value: /usr/lib/wsl/lib
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: utility
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: wsl-libs
+              mountPath: /usr/lib/wsl/lib
+              readOnly: true
