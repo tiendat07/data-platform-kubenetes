@@ -1,0 +1,44 @@
+# minio-init-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-folder-creation-job
+  namespace: minio # Run the job in the same namespace as MinIO
+spec:
+  template:
+    spec:
+      # We don't want this job to run again if it fails.
+      # For this simple task, we can just rerun it manually if needed.
+      restartPolicy: Never
+      containers:
+      - name: minio-client
+        image: minio/mc:latest
+        # The command to run is our script.
+        command: ["/bin/sh", "/scripts/minio-init-script.sh"]
+        env:
+          # We need to provide the MinIO credentials to the job.
+          # We securely get them from the same secret that the MinIO chart created.
+          - name: MINIO_ROOT_USER
+            valueFrom:
+              secretKeyRef:
+                name: minio # The name of the secret created by the Helm chart
+                key: root-user
+          - name: MINIO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: minio # The name of the secret
+                key: root-password
+        volumeMounts:
+          # Mount the script from our ConfigMap into the pod.
+          - name: scripts
+            mountPath: /scripts
+      volumes:
+        # Define the volume that comes from our ConfigMap.
+        - name: scripts
+          configMap:
+            name: minio-init-script
+            # Make the script executable
+            defaultMode: 0755
+  # This tells the Job to automatically clean up the pod after it completes.
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 100
