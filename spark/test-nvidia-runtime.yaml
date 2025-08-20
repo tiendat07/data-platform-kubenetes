@@ -6,7 +6,7 @@ spec:
   runtimeClassName: nvidia
   containers:
   - name: test
-    image: docker.io/tiendat2807/spark-gpu:v0.6.0
+    image: docker.io/tiendat2807/spark-gpu:v0.7.0
     command: ["nvidia-smi"]
     resources:
       limits:

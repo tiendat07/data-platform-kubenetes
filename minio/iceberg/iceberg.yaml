@@ -32,6 +32,13 @@ spec:
         image: tabulario/iceberg-rest:1.6.0
         ports:
         - containerPort: 8181
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
         env:
         # --- Configure the Catalog to use PostgreSQL ---
         - name: CATALOG_IMPL

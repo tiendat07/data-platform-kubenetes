@@ -1,15 +1,10 @@
-# values.yaml for the Bitnami PostgreSQL chart
 auth:
-  # IMPORTANT: Change this password in a real environment
   postgresPassword: "postgres"
   username: "iceberg"
   password: "password"
   database: "iceberg_catalog"
 service:
   clusterIP: None
-# For personal projects, disabling persistence is easier to manage initially.
-# The data will be lost if the pod restarts.
-# For real use, you would configure a PersistentVolume.
 primary:
   persistence:
     enabled: true

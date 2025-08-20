@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
+FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04 as CUDA_BASE
 ARG spark_uid=185
 
 # https://forums.developer.nvidia.com/t/notice-cuda-linux-repository-key-rotation/212771
@@ -22,7 +22,8 @@ RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/
 
 # Install java dependencies
 ENV DEBIAN_FRONTEND="noninteractive"
-RUN apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk openjdk-8-jre
+RUN apt-get update && apt-get install -y --no-install-recommends openjdk-8-jdk openjdk-8-jre wget curl && \
+    rm -rf /var/lib/apt/lists/*
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 ENV PATH $PATH:/usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/bin:/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin
 
@@ -84,3 +85,20 @@ ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 # Specify the User that the actual main process will run as
 USER ${spark_uid}
+
+FROM CUDA_BASE as JAR_BASE
+
+ARG HADOOP_AWS_VERSION=3.3.4
+ARG AWS_JAVA_SDK_VERSION=1.12.749
+ARG POSTGRES_JDBC_VERSION=42.7.3
+
+USER 0
+
+WORKDIR /opt/spark/jars
+
+RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_AWS_VERSION}/hadoop-aws-${HADOOP_AWS_VERSION}.jar && \
+    wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/${AWS_JAVA_SDK_VERSION}/aws-java-sdk-bundle-${AWS_JAVA_SDK_VERSION}.jar && \
+    wget https://repo1.maven.org/maven2/org/postgresql/postgresql/${POSTGRES_JDBC_VERSION}/postgresql-${POSTGRES_JDBC_VERSION}.jar
+
+WORKDIR /opt/spark/work-dir
+USER 185

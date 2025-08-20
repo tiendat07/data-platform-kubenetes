@@ -19,13 +19,11 @@ service:
     console: 9001
 console:
   enabled: true
-  # Define the public hostname for the API service
   api:
     hostname: minio-api.local
-  # Define the public hostname for the Console service
   console:
     hostname: minio.local
-defaultBuckets: "lakehouse, airflow, risingwave, kafka"
+defaultBuckets: "lakehouse, airflow, risingwave, kafka, spark-logs, raw"
 persistence:
   enabled: true
   size: 50Gi
