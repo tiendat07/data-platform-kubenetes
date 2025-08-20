@@ -1,0 +1,58 @@
+# spark-history-server.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-history-server
+  namespace: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-history-server
+  template:
+    metadata:
+      labels:
+        app: spark-history-server
+    spec:
+      containers:
+      - name: history-server
+        # Use a standard Spark image
+        image: docker.io/tiendat2807/spark-history-server:v0.1
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.history.HistoryServer"]
+        ports:
+        - containerPort: 18080
+        env:
+          # --- Environment variables to configure the history server ---
+          - name: SPARK_HISTORY_OPTS
+            value: >-
+              -Dspark.history.fs.logDirectory=s3a://spark-logs/logs
+              -Dspark.hadoop.fs.s3a.endpoint=http://minio.minio.svc.cluster.local:9000
+              -Dspark.hadoop.fs.s3a.access.key=admin
+              -Dspark.hadoop.fs.s3a.secret.key=password
+              -Dspark.hadoop.fs.s3a.path.style.access=true
+              -Dspark.hadoop.fs.s3a.connection.ssl.enabled=false
+        # --- You need the hadoop-aws JAR to talk to S3 ---
+        # We can't easily add it here, so it's better to build a custom image
+        # or use an image that already has it. For now, let's assume the base image might work.
+        # A more robust solution is a custom Docker image.
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-history-server-svc
+  namespace: spark
+spec:
+  selector:
+    app: spark-history-server
+  ports:
+  - protocol: TCP
+    port: 18080
+    targetPort: 18080

@@ -1,0 +1,24 @@
+# Dockerfile for Spark History Server
+
+# 1. Start from the official Spark image that matches your jobs
+FROM apache/spark:3.5.6-python3
+
+# 2. Define arguments for the JAR versions so they are easy to update
+ARG HADOOP_AWS_VERSION=3.3.4
+ARG AWS_JAVA_SDK_VERSION=1.12.749
+ARG POSTGRES_JDBC_VERSION=42.7.3
+
+# 3. Switch to the root user to install packages
+USER 0
+
+# 4. Go to the Spark JARs directory
+WORKDIR /opt/spark/jars
+
+# 5. Download the required JAR files directly into the directory
+# The hadoop-aws JAR and its dependency, the aws-java-sdk-bundle
+RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_AWS_VERSION}/hadoop-aws-${HADOOP_AWS_VERSION}.jar && \
+    wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/${AWS_JAVA_SDK_VERSION}/aws-java-sdk-bundle-${AWS_JAVA_SDK_VERSION}.jar && \
+    wget https://repo1.maven.org/maven2/org/postgresql/postgresql/${POSTGRES_JDBC_VERSION}/postgresql-${POSTGRES_JDBC_VERSION}.jar
+
+# 6. Switch back to the default spark user
+USER 185
