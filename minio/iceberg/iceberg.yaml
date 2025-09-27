@@ -28,7 +28,6 @@ spec:
     spec:
       containers:
       - name: catalog
-        # Using a pre-built container image for the REST catalog
         image: tabulario/iceberg-rest:1.6.0
         ports:
         - containerPort: 8181
@@ -40,16 +39,11 @@ spec:
             cpu: "500m"
             memory: "512Mi"
         env:
-        # --- Configure the Catalog to use PostgreSQL ---
-        - name: CATALOG_IMPL
-          value: "org.apache.iceberg.jdbc.JdbcCatalog"
+        - name: CATALOG_IO__IMPL
+          value: "org.apache.iceberg.aws.s3.S3FileIO"
         - name: CATALOG_WAREHOUSE
-          # This is the S3 path inside MinIO where your data will be stored.
-          # We'll use the 'lakehouse' bucket you created earlier.
-          value: "s3a://lakehouse"
+          value: "s3://lakehouse/"
         - name: CATALOG_URI
-          # This is the JDBC connection string for the PostgreSQL service.
-          # The format is postgresql-hl.<namespace>.svc.cluster.local
           value: "jdbc:postgresql://postgres-postgresql-hl.catalog.svc.cluster.local:5432/iceberg_catalog"
         - name: CATALOG_JDBC_USER
           value: "iceberg"
@@ -58,14 +52,14 @@ spec:
             secretKeyRef:
               name: postgres-postgresql
               key: password
-
-        # --- Configure S3 settings to connect to MinIO ---
+        - name: CATALOG_S3_PATH-STYLE-ACCESS
+          value: "true"
         - name: CATALOG_S3_ENDPOINT
-          # This is the internal ClusterIP address of your MinIO API service.
           value: "http://minio.minio.svc.cluster.local:9000"
-        - name: CATALOG_S3_ACCESS_KEY_ID
-          value: "admin" # Your MinIO root user
-        - name: CATALOG_S3_SECRET_ACCESS_KEY
-          value: "password" # Your MinIO root password
-        - name: CATALOG_S3_PATH_STYLE_ACCESS
-          value: "true" # Required for MinIO
+        - name: AWS_ACCESS_KEY_ID
+          value: "admin"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "password"
+        - name: AWS_REGION
+          value: "us-east-1"
+
