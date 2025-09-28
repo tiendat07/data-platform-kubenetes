@@ -1,12 +1,7 @@
-# values.yaml for the Trino Helm chart
-
-# We don't need the server line from the default values
 server:
-  workers: 2 # Start with 2 workers. You can increase this later.
+  workers: 2
 
-# This section defines the Trino coordinator
 coordinator:
-  # You can set resource limits here if needed
   resources:
     requests:
       cpu: 1
@@ -14,7 +9,6 @@ coordinator:
     limits:
       cpu: 2
       memory: 4Gi
-  # Make the coordinator accessible via NodePort for now
   service:
     type: ClusterIP
     port: 8080
@@ -22,18 +16,18 @@ coordinator:
 additionalConfigProperties:
   - http-server.process-forwarded=true
 
-# This is where we define our connectors.
-# We are adding one connector named "iceberg".
 additionalCatalogs:
-  iceberg.properties: |
-    # This is the name of the connector Trino will use.
-    # You will run queries like: SELECT * FROM iceberg.my_first_namespace.my_table;
+  lakehouse: |
     connector.name=iceberg
-
-    # --- Configuration for the REST Catalog ---
-    # This tells the Iceberg connector to use a REST-based catalog.
     iceberg.catalog.type=rest
-    # This is the internal ClusterIP URL of your REST Catalog service.
     iceberg.rest-catalog.uri=http://iceberg-rest-catalog.catalog.svc.cluster.local:8181
+    iceberg.rest-catalog.warehouse=s3://lakehouse/
+    iceberg.file-format=PARQUET
+    fs.native-s3.enabled=true
+    s3.path-style-access=true
+    s3.endpoint=http://minio.minio.svc.cluster.local:9000
+    s3.aws-access-key=admin
+    s3.aws-secret-key=password
+    s3.region=us-east-1
     iceberg.register-table-procedure.enabled=true
     iceberg.unique-table-location=true
