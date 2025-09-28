@@ -1,0 +1,67 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: gpu-monte-carlo
+  namespace: default
+spec:
+  type: Python
+  mode: cluster
+  image: docker.io/tiendat2807/spark-gpu:v0.7.0
+  imagePullPolicy: Always
+  sparkVersion: 3.5.6
+  mainApplicationFile: local:///app/gpu_monte_carlo.py
+  arguments:
+    - "10"
+  restartPolicy:
+    type: Never
+  
+  volumes:
+    - name: spark-job-code
+      configMap:
+        name: spark-monte-carlo-code
+
+  sparkConf:
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "s3a://spark-logs/logs"
+    "spark.hadoop.fs.s3a.endpoint": "http://minio.minio.svc.cluster.local:9000"
+    "spark.hadoop.fs.s3a.access.key": "admin"
+    "spark.hadoop.fs.s3a.secret.key": "password"
+    "spark.hadoop.fs.s3a.path.style.access": "true"
+    "spark.hadoop.fs.s3a.connection.ssl.enabled": "false"
+    "spark.ui.port": "4045"
+    "spark.rapids.sql.concurrentGpuTasks": "3"
+    "spark.executor.resource.gpu.amount": "1"
+    "spark.task.resource.gpu.amount": "1"
+    "spark.executor.memory": "1g"
+    "spark.rapids.memory.pinnedPool.size": "2g"
+    "spark.executor.memoryOverhead": "3g"
+    "spark.sql.files.maxPartitionBytes": "512m"
+    "spark.sql.shuffle.partitions": "10"
+    "spark.plugins": "com.nvidia.spark.SQLPlugin"
+    "spark.rapids.sql.enabled": "true"
+    "spark.executor.resource.gpu.discoveryScript": "/opt/sparkRapidsPlugin/getGpusResources.sh"
+    "spark.executor.resource.gpu.vendor": "nvidia.com"
+    "spark.executor.extraClassPath": "/opt/sparkRapidsPlugin/rapids-4-spark_2.12-25.06.0-cuda12.jar"
+    "spark.driver.extraClassPath": "/opt/sparkRapidsPlugin/rapids-4-spark_2.12-25.06.0-cuda12.jar"
+    
+
+  driver:
+    cores: 1
+    memory: "512m"
+    serviceAccount: spark
+    volumeMounts:
+      - name: spark-job-code
+        mountPath: /app
+
+  executor:
+    cores: 1
+    instances: 1
+    memory: "512m"
+    template:
+      spec:
+        runtimeClassName: nvidia
+        containers:
+        - name: spark-kubernetes-executor
+          resources:
+            limits:
+              nvidia.com/gpu: 1
