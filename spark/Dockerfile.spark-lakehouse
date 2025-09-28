@@ -1,0 +1,7 @@
+FROM tiendat2807/spark-iceberg:0.0.3
+
+ENV  PYTHONPATH=/app:$PYTHONPATH
+
+
+WORKDIR /app
+COPY src/ /app/

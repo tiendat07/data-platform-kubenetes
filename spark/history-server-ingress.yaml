@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: history-server-ingress
-  namespace: default
+  namespace: spark
 spec:
   ingressClassName: nginx
   rules:

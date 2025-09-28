@@ -2,12 +2,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: spark
+  namespace: default
   name: spark-role
 rules:
 - apiGroups: [""] # The empty "" indicates the core API group
-  resources: ["pods", "services", "configmaps"]
-  verbs: ["get", "list", "watch", "create", "delete"]
+  resources: ["pods", "services", "configmaps", "events", "persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "delete", "deletecollection", "update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
