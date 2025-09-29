@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparglim-app
+  namespace: sparglim
+  labels:
+    app: sparglim
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: sparglim-app
+  template:
+    metadata:
+      labels:
+        app: sparglim-app
+    spec:
+      containers:
+        - name: sparglim-app
+          image: tiendat2807/jupyterlab-sparglim
+          ports:
+            - containerPort: 8888
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          env:
+            - name: SPARGLIM_SQL_MODE
+              value: "k8s"
+            - name: SPARGLIM_DRIVER_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SPARGLIM_DRIVER_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: AWS_ACCESS_KEY_ID
+              value: "admin"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "password"
+            - name: S3_ENTRY_POINT
+              value: "minio.minio.svc.cluster.local:9000"
+            - name: S3_HTTP_ENTRY_POINT
+              value: "http://minio.minio.svc.cluster.local:9000"
+            - name: S3_PATH_STYLE_ACCESS
+              value: "true"
+            - name: SPARGLIM_K8S_IMAGE
+              value: "tiendat2807/spark-iceberg:0.0.9"
+            - name: SPARGLIM_K8S_IMAGE_PULL_POLICY
+              value: "Always"
+            - name: SPARK_EXECUTOR_NUMS
+              value: "2"
+            - name: SPARGLIM_EXECUTOR_REQUEST_MEMORY
+              value: "2G"
+            - name: SPARGLIM_EXECUTOR_LIMIT_MEMORY
+              value: "2G"
+            - name: SPARGLIM_K8S_EXECUTOR_REQUEST_CORES
+              value: "3"
+            - name: SPARGLIM_EXECUTOR_CORES
+              value: "3"
+            - name: SPARGLIM_K8S_EXECUTOR_LIMIT_CORES
+              value: "3"
+            - name: SPARGLIM_SQL_CATALOG_LAKEHOUSE_WAREHOUSE
+              value: "s3a://lakehouse/"
+            - name: SPARGLIM_SQL_CATALOG_LAKEHOUSE_TYPE
+              value: "rest"
+            - name: SPARGLIM_SQL_CATALOG_LAKEHOUSE_URI
+              value: "http://iceberg-rest-catalog.catalog.svc.cluster.local:8181"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: S3_SSL_ENABLE
+              value: "false"

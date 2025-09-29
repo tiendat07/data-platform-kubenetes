@@ -1,0 +1,25 @@
+FROM python:3.10.12-slim-bookworm as builder
+
+RUN pip install build twine hatch
+COPY . /source
+WORKDIR /source
+RUN python -m build
+
+FROM tiendat2807/spark-lakehouse:0.0.9
+
+USER root
+RUN  apt-get -y update && apt-get -y upgrade && apt-get install -y gcc python3-dev tini \
+    && rm -rf /var/lib/apt/lists/* &&  rm -rf /root/.cache && rm -rf /var/cache/apt/*
+
+USER application
+COPY --from=builder --chown=application:application /source/dist/*.whl /tmp/
+
+RUN for f in $(echo /tmp/*.whl); do pip install --no-cache-dir $f[all]; done
+
+# As user application
+RUN pip install --no-cache-dir jupyterlab
+
+ENTRYPOINT ["tini","--","jupyter-lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--IdentityProvider.token=''"]
+EXPOSE 8888
+
+# docker buildx build --platform linux/amd64,linux/arm64/v8 -t wh1isper/jupyterlab-sparglim:latest -f docker/Dockerfile.jupyterlab-sparglim --push .
