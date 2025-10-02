@@ -54,7 +54,7 @@ spec:
             - name: S3_PATH_STYLE_ACCESS
               value: "true"
             - name: SPARGLIM_K8S_IMAGE
-              value: "tiendat2807/spark-iceberg:0.0.9"
+              value: "tiendat2807/spark-lakehouse:0.0.9"
             - name: SPARGLIM_K8S_IMAGE_PULL_POLICY
               value: "Always"
             - name: SPARK_EXECUTOR_NUMS

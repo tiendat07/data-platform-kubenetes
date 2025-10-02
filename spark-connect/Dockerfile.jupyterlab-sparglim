@@ -25,7 +25,7 @@ RUN for f in $(echo /tmp/*.whl); do pip install --no-cache-dir $f[all]; done
 # As user application
 RUN pip install --no-cache-dir jupyterlab
 
-ENTRYPOINT ["tini","--","python3", "-m", "jupyterlab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--IdentityProvider.token=''"]
+ENTRYPOINT ["tini","--","python3", "-m", "jupyterlab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.allow_origin='*'", "--NotebookApp.token='123'"]
 EXPOSE 8888
 
 # docker buildx build --platform linux/amd64,linux/arm64/v8 -t wh1isper/jupyterlab-sparglim:latest -f docker/Dockerfile.jupyterlab-sparglim --push .
