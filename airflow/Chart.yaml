@@ -1,0 +1,12 @@
+apiVersion: v2
+name: dataplatform-airflow
+description: DataPlatform umbrella chart containing Airflow 3
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: airflow
+    version: 1.18.0
+    repository: "https://airflow.apache.org"
+    alias: airflow
+    condition: airflow.enabled

@@ -1,0 +1,24 @@
+# airflow/airflow-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: airflow-ingress
+  namespace: airflow
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: airflow.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: airflow-api-server
+                port:
+                  number: 8080    # api-server service targetPort
+  # TLS is optional
+  # tls:
+  #   - hosts:
+  #       - airflow.local
+  #     secretName: airflow-tls
