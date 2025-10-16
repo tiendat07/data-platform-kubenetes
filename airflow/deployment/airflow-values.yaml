@@ -45,6 +45,15 @@ dags:
     depth: 1
     subPath: "airflow"
 
+config:
+  core:
+    load_examples: 'True'
+  logging:
+    remote_logging: 'True'
+    remote_base_log_folder: 's3://airflow/logs'
+    remote_log_conn_id: 's3_default'
+    encryption: 'False'
+
 extraEnv: |
   - name: AIRFLOW__CORE__DAGS_FOLDER
     value: '/opt/airflow/dags/repo/airflow/dags'

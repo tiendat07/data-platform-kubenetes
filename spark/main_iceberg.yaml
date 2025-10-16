@@ -38,7 +38,7 @@ spec:
       - name: S3_PATH_STYLE_ACCESS
         value: "true"
       - name: S3_WAREHOUSE
-        value: "s3://lakehouse/"
+        value: "s3a://lakehouse/"
       - name: ICEBERG_REST_CATALOG_URI
         value: "http://iceberg-rest-catalog.catalog.svc.cluster.local:8181"
       - name: DATA_PATH
@@ -64,7 +64,7 @@ spec:
       - name: S3_PATH_STYLE_ACCESS
         value: "true"
       - name: S3_WAREHOUSE
-        value: "s3://lakehouse/"
+        value: "s3a://lakehouse/"
       - name: ICEBERG_REST_CATALOG_URI
         value: "http://iceberg-rest-catalog.catalog.svc.cluster.local:8181"
       - name: DATA_PATH
