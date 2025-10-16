@@ -18,7 +18,7 @@ args = {
 }
 
 dag = DAG(
-    dag_id="spark_connect_server_example", default_args=args, schedule_interval=None
+    dag_id="spark_connect_server_example", default_args=args, schedule=None
 )
 
 
