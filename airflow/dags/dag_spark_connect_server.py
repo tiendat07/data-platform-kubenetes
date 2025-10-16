@@ -74,7 +74,6 @@ end = EmptyOperator(
 
 spark_connect_server_example = PythonOperator(
     task_id="spark_connect_server_example",
-    provide_context=True,
     python_callable=spark_connect_server_example,
     dag=dag,
 )
