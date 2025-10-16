@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import range
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.models import DAG
 from pyspark.sql import SparkSession
 from datetime import datetime, date, timedelta
