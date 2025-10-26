@@ -19,7 +19,7 @@ echo "Creating default folders..."
 
 # Create each folder. The -p flag ensures parent directories are also created.
 mc mb -p myminio/lakehouse/iceberg
-mc mb -p myminio/airflow/dags
+mc mb -p myminio/airflow/logs
 mc mb -p myminio/risingwave/data
 mc mb -p myminio/kafka/data
 mc mb -p myminio/spark-logs/logs
