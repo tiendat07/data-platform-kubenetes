@@ -9,10 +9,10 @@ services:
       POSTGRES_USER: iceberg
       POSTGRES_PASSWORD: password
       POSTGRES_DB: iceberg_catalog
-      POSTGRES_HOST_AUTH_METHOD: md5
       TZ: Asia/Ho_Chi_Minh
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:

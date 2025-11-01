@@ -30,11 +30,11 @@ spec:
         - containerPort: 18080
         env:
           # --- Environment variables to configure the history server ---
+          # -Dspark.hadoop.fs.s3a.endpoint=http://minio.minio.svc.cluster.local:9000
           - name: SPARK_HISTORY_OPTS
             value: >-
               -Dspark.history.fs.logDirectory=s3a://spark-logs/logs
-              # -Dspark.hadoop.fs.s3a.endpoint=http://minio.minio.svc.cluster.local:9000
-              -Dspark.hadoop.fs.s3a.endpoint=http://minio-api.homelab
+              -Dspark.hadoop.fs.s3a.endpoint=http://192.168.1.111:9000
               -Dspark.hadoop.fs.s3a.access.key=admin
               -Dspark.hadoop.fs.s3a.secret.key=password
               -Dspark.hadoop.fs.s3a.path.style.access=true
@@ -57,3 +57,4 @@ spec:
   - protocol: TCP
     port: 18080
     targetPort: 18080
+

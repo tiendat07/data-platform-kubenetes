@@ -4,27 +4,24 @@ airflowVersion: "3.1.0"
 
 executor: KubernetesExecutor
 
+images:
+  airflow:
+    repository: tiendat2807/airflow
+    tag: "3.1.0"
+    pullPolicy: Always
+
 data:
   metadataConnection:
     user: airflow
     pass: airflow
     protocol: postgresql
-    host: postgres-postgresql-hl.catalog.svc.cluster.local
+    # host: postgres-postgresql-hl.catalog.svc.cluster.local
+    host: 192.168.1.110
     port: 5432
     db: airflow
     sslmode: disable
 
 webserverSecretKey: 'Y3dUUkZmNEdHS1prM29zam8zbDdwejlhUG5sVlVXTkw='
-
-ingress:
-  web:
-    enabled: false
-    ingressClassName: nginx
-    path: "/" 
-    pathType: Prefix
-    host: airflow.local
-    hosts:
-      - airflow.local
 
 users:
   createUserJob:
@@ -54,6 +51,10 @@ config:
     remote_log_conn_id: 's3_default'
     encryption: 'False'
 
+dependencies:
+  - name: apache-airflow-providers-cncf-kubernetes
+    version: 10.9.0
+
 extraEnv: |
   - name: AIRFLOW__CORE__DAGS_FOLDER
     value: '/opt/airflow/dags/repo/airflow/dags'
@@ -63,6 +64,12 @@ extraEnv: |
     value: '300'
   - name: AIRFLOW__SCHEDULER__PARSING_CLEANUP_INTERVAL
     value: '30'
+  - name: AWS_ACCESS_KEY_ID
+    value: 'admin'
+  - name: AWS_SECRET_ACCESS_KEY
+    value: 'password'
+  - name: AWS_ENDPOINT_URL
+    value: 'http://192.168.1.111:9000'
 
 postgresql:
   enabled: false

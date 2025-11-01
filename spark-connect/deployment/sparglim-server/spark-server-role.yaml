@@ -1,0 +1,33 @@
+# spark-server-role.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark
+  namespace: sparglim
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: sparglim
+  name: spark-role
+rules:
+- apiGroups: [""] # The empty "" indicates the core API group
+  resources: ["pods", "services", "configmaps", "events", "persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "create", "delete", "deletecollection", "update", "patch"]
+- apiGroups: [""]
+  resources: ["pods/exec/logs"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark-role-binding
+  namespace: sparglim
+subjects:
+- kind: ServiceAccount
+  name: spark # This binds the role to your 'spark' ServiceAccount
+  namespace: sparglim
+roleRef:
+  kind: Role
+  name: spark-role # This refers to the Role defined above
+  apiGroup: rbac.authorization.k8s.io

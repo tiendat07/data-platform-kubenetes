@@ -6,7 +6,7 @@ apache-airflow==3.1.0
 apache-airflow-providers-trino
 apache-airflow-providers-cncf-kubernetes
 apache-airflow-providers-fab
-pyspark
+pyspark==3.5.6
 grpcio-status
 pyarrow
 polars==1.33.1
